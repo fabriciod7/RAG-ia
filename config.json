@@ -1,0 +1,9 @@
+{
+  "config_name": "B",
+  "chunk_size": 800,
+  "chunk_overlap": 150,
+  "top_k": 10,
+  "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+  "max_new_tokens": 512,
+  "temperature": 0.7
+}

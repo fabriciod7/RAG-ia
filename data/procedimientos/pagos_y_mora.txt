@@ -1,0 +1,99 @@
+PROCEDIMIENTO DE PAGOS Y MORA — CLUB SOCIAL Y DEPORTIVO "LAS PALMERAS"
+Versión vigente: enero 2025
+
+================================================================
+CAPÍTULO 1 — MEDIOS DE PAGO
+================================================================
+
+El club acepta los siguientes medios de pago para el abono de cuotas:
+
+1.1 EFECTIVO
+   - En Secretaría, de lunes a viernes de 9:00 a 13:00 y de 16:00 a 20:00.
+   - Sábados de 9:00 a 13:00.
+   - Se entrega recibo oficial en el acto.
+
+1.2 TRANSFERENCIA BANCARIA / CBU
+   - CBU: 1234567890123456789012
+   - ALIAS: PALMERAS.CLUB.CORDOBA
+   - Titular: Asociación Civil Club Las Palmeras
+   - CUIT: 30-12345678-9
+   - Importante: indicar en el concepto el NÚMERO DE SOCIO y el MES que se abona (ej: "Socio 4512 – Cuota Mayo 2025"). Sin estos datos, el pago no puede acreditarse automáticamente y puede quedar en estado pendiente hasta 48 hs hábiles.
+
+1.3 DÉBITO AUTOMÁTICO
+   - Disponible para los bancos: Banco Nación, Galicia, BBVA y Santander.
+   - La adhesión se realiza en Secretaría completando el formulario correspondiente.
+   - El débito se realiza el día 5 de cada mes. Si el día 5 es feriado, el débito se efectúa el siguiente día hábil.
+   - Para dar de baja el débito automático, el socio debe solicitarlo en Secretaría con 10 días de anticipación al siguiente ciclo de cobro.
+
+1.4 TARJETA DE CRÉDITO (en Secretaría)
+   - Visa y Mastercard. Se aceptan hasta 3 cuotas sin interés.
+   - No disponible para abonos fuera de Secretaría ni via transferencia.
+
+1.5 PAGO EN EFECTIVO EN RAPIPAGO / PAGO FÁCIL
+   - Consultar en Secretaría el código de empresa para pago en redes externas.
+   - Este servicio aplica un cargo de servicio de $ 150 por transacción a cargo del socio.
+
+================================================================
+CAPÍTULO 2 — FECHAS DE VENCIMIENTO
+================================================================
+
+   - Las cuotas mensuales vencen el día 10 de cada mes.
+   - Existe un período de gracia de 5 días corridos (hasta el día 15 inclusive).
+   - A partir del día 16 del mes, la cuota se considera vencida y comienzan a aplicarse los recargos por mora.
+   - Los socios con débito automático no tienen período de gracia adicional; el débito intenta ejecutarse el día 5. Si falla por falta de fondos, el socio tiene plazo hasta el día 10 para regularizar manualmente.
+
+================================================================
+CAPÍTULO 3 — CONSECUENCIAS DE LA MORA
+================================================================
+
+3.1 RECARGOS ECONÓMICOS:
+
+   - Mora de 1 a 30 días (días 16 al 45 del mes vencido): recargo del 5 % sobre el valor de la cuota.
+   - Mora de 31 a 60 días: recargo acumulativo del 10 % sobre el valor original.
+   - Mora mayor a 60 días: recargo del 15 % + inicio del procedimiento de suspensión.
+
+3.2 RESTRICCIONES DE ACCESO:
+
+   - Con 1 cuota impaga vencida: el socio puede acceder al club pero recibe un aviso en recepción.
+   - Con 2 cuotas vencidas impagas: acceso restringido a instalaciones cubiertas; no puede reservar canchas ni acceder a eventos especiales.
+   - Con 3 cuotas vencidas impagas: acceso al club suspendido completamente hasta regularización.
+   - Con 6 cuotas vencidas: baja automática (ver Reglamento de Socios, art. 4.2).
+
+3.3 COMUNICACIONES:
+
+   - Al vencimiento: notificación automática por correo electrónico.
+   - A los 15 días de mora: segundo aviso por email y SMS (si el socio tiene número registrado).
+   - A los 30 días: notificación formal por carta o presencial en Secretaría.
+   - A los 60 días: carta documento informando inicio del proceso de baja.
+
+================================================================
+CAPÍTULO 4 — CÓMO REGULARIZAR UNA DEUDA
+================================================================
+
+El socio moroso puede regularizar su situación a través de los siguientes mecanismos:
+
+4.1 PAGO TOTAL
+   - Abonar el monto total adeudado (cuotas + recargos correspondientes) en un único pago.
+   - El acceso al club se restaura el mismo día, previa confirmación de pago en Secretaría.
+
+4.2 PLAN DE CUOTAS (MORATORIA INTERNA)
+   - Disponible para deudas de hasta 6 cuotas.
+   - El socio debe presentarse en Secretaría y firmar un convenio de pago.
+   - La deuda total (con recargos) se divide en un máximo de 3 cuotas mensuales adicionales.
+   - Durante el plan de cuotas, el socio recupera acceso básico a las instalaciones (mismo nivel que adherente), pero no puede reservar canchas ni participar en torneos.
+   - El incumplimiento de una cuota del plan de pago anula el convenio y reactiva la baja.
+
+4.3 CONDONACIÓN DE RECARGOS (excepcional)
+   - Solo aplicable si el socio demuestra causa de fuerza mayor documentada (ej: internación médica, desastre).
+   - Requiere presentación de nota y documentación ante la Comisión Directiva.
+   - La Comisión resuelve dentro de los 15 días hábiles. No hay garantía de aprobación.
+
+================================================================
+CAPÍTULO 5 — CONSTANCIA DE PAGO
+================================================================
+
+   - Todo pago genera un recibo numerado. El socio puede solicitar copia en Secretaría.
+   - Las transferencias acreditadas generan un comprobante que puede visualizarse en el portal web del club ingresando con número de socio y DNI: www.laspalmeras.com.ar/socios
+   - Ante discrepancias entre el registro del club y el comprobante del socio, prevalece el comprobante bancario presentado por el socio, salvo error comprobable del banco.
+
+================================================================
