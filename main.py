@@ -4,7 +4,7 @@ TP Integrador - Inteligencia Artificial - 4. anno - Lic. en Sistemas
 
 Pipeline:
   0. Silenciar logs y warnings
-  1. Leer config.json
+  1. Configuracion hardcodeada en este archivo
   2. Cargar modelo de embeddings (all-mpnet-base-v2)
   3. Cargar/crear base vectorial Chroma
   4. Cargar LLM Qwen2.5-0.5B-Instruct
@@ -14,7 +14,7 @@ Pipeline:
 import os
 import sys
 import glob
-import json
+import re
 import warnings
 import logging
 
@@ -50,82 +50,53 @@ for _noisy in (
 # ------------------------------------------------------------
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import PyPDFLoader, TextLoader, CSVLoader
+from langchain_community.document_loaders import PyMuPDFLoader, TextLoader, CSVLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline as hf_pipeline
 
 
 # ============================================================
-# PASO 1 - Leer configuracion desde config.json
+# PASO 1 - Configuracion (editar directamente aqui)
 # ============================================================
 
-CONFIG_PATH = "config.json"
-
-CONFIG_PRESETS = {
-    "A": {"chunk_size": 300,  "chunk_overlap": 50,  "top_k": 5},
-    "B": {"chunk_size": 800,  "chunk_overlap": 150, "top_k": 10},
-    "C": {"chunk_size": 500,  "chunk_overlap": 100, "top_k": 5},
-}
-
-DEFAULTS = {
-    "config_name": "B",
-    "chunk_size": 800,
-    "chunk_overlap": 150,
-    "top_k": 10,
-    "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
-    "max_new_tokens": 512,
-    "temperature": 0.7,
-}
-
-
-def cargar_config(path):
-    """
-    Carga config.json. Si no existe, usa DEFAULTS (Config B).
-    Si config_name coincide con un preset (A/B/C), los parametros
-    del preset sobreescriben chunk_size, chunk_overlap y top_k.
-    """
-    if not os.path.exists(path):
-        print("[AVISO] No se encontro config.json. Usando configuracion B por defecto.")
-        return dict(DEFAULTS)
-
-    with open(path, encoding="utf-8") as f:
-        cfg = json.load(f)
-
-    for key, val in DEFAULTS.items():
-        cfg.setdefault(key, val)
-
-    preset_name = str(cfg.get("config_name", "")).upper()
-    if preset_name in CONFIG_PRESETS:
-        for key, val in CONFIG_PRESETS[preset_name].items():
-            cfg[key] = val
-        cfg["config_name"] = preset_name
-
-    return cfg
-
-
-cfg = cargar_config(CONFIG_PATH)
-
+# --- Rutas ---
 PERSIST_DIR    = "./data_db"
 DATA_DIR       = "./data"
-CHUNK_SIZE     = cfg["chunk_size"]
-CHUNK_OVERLAP  = cfg["chunk_overlap"]
-TOP_K          = cfg["top_k"]
-MODEL_ID       = cfg["model_id"]
-MAX_NEW_TOKENS = cfg["max_new_tokens"]
-TEMPERATURE    = cfg["temperature"]
-CONFIG_NAME    = cfg["config_name"]
+
+# --- Chunking ---
+CHUNK_SIZE     = 400    # Tamano de cada fragmento en caracteres
+CHUNK_OVERLAP  = 50   # Solapamiento entre fragmentos consecutivos
+
+# --- Recuperacion ---
+TOP_K               = 3    # Chunks pasados al LLM: menos = mas enfocado, menos alucinacion
+TOP_SHOW            = 2    # Cantidad de fuentes destacadas a mostrar al usuario
+MIN_SCORE_THRESHOLD = 0.80 # Distancia maxima aceptable — solo chunks muy relevantes
+                           # Si todos los chunks superan este umbral, se rechaza la consulta
+
+# --- Modelo LLM ---
+MODEL_ID         = "Qwen/Qwen2.5-0.5B-Instruct"
+MAX_NEW_TOKENS   = 512
+TEMPERATURE      = 0.2
+REPETITION_PEN   = 1.1
+
+# --- Modo de respuesta ---
+# MODO_DIRECTO = True  -> muestra los fragmentos del documento sin pasar por el LLM
+#                         Respuesta 100% fiel al texto, sin alucinaciones.
+# MODO_DIRECTO = False -> usa el LLM para generar la respuesta (puede alucinar con 0.5B)
+MODO_DIRECTO     = False
 
 LINEA = "=" * 65
 
 print(LINEA)
 print("  ASISTENTE RAG - Club Social y Deportivo Las Palmeras")
 print(LINEA)
-print(f"  Configuracion activa : Config {CONFIG_NAME}")
 print(f"  Chunk size           : {CHUNK_SIZE} chars")
 print(f"  Chunk overlap        : {CHUNK_OVERLAP} chars")
 print(f"  Top-K recuperado     : {TOP_K}")
+print(f"  Fuentes a mostrar    : {TOP_SHOW}")
 print(f"  Modelo LLM           : {MODEL_ID}")
-print(f"  Temperature          : {TEMPERATURE}")
+print(f"  Temperatura          : {TEMPERATURE}")
+print(f"  Repetition penalty   : {REPETITION_PEN}")
 print(LINEA)
 
 
@@ -153,7 +124,7 @@ def cargar_documentos(data_dir):
             continue
         try:
             if file_path.endswith(".pdf"):
-                loader = PyPDFLoader(file_path)
+                loader = PyMuPDFLoader(file_path)
             elif file_path.endswith(".csv"):
                 loader = CSVLoader(file_path, encoding="utf-8")
             elif file_path.endswith(".txt"):
@@ -245,6 +216,7 @@ pipe = hf_pipeline(
     tokenizer=tokenizer,
     max_new_tokens=MAX_NEW_TOKENS,
     temperature=TEMPERATURE,
+    repetition_penalty=REPETITION_PEN,
     do_sample=True,
     return_full_text=False,
 )
@@ -257,16 +229,24 @@ print("[OK]  LLM listo.")
 # ============================================================
 
 SYSTEM_PROMPT = (
-    "Responde UNICAMENTE con informacion presente en el contexto proporcionado. "
-    "Si la respuesta no esta en el contexto, di exactamente: "
-    "No encuentro evidencia suficiente en el contexto para responder esta pregunta. "
-    "No uses conocimiento general ni suposiciones."
+    "Utiliza el contexto proporcionado para responder detalladamente. "
+    "Explica los conceptos solo basandote en la informacion proporcionada."
 )
+
+
+def limpiar_texto(texto):
+    """Normaliza texto extraido de PDF: colapsa espacios multiples y saltos de linea sueltos."""
+    # Colapsar 2+ espacios en uno solo
+    texto = re.sub(r'  +', ' ', texto)
+    # Saltos de linea multiples con solo espacios entre ellos -> un salto de linea
+    texto = re.sub(r'\n\s*\n', '\n', texto)
+    return texto.strip()
 
 
 def buscar_contexto(query):
     """
     Busca los TOP_K fragmentos mas relevantes en la vectorstore.
+    Filtra por MIN_SCORE_THRESHOLD: descarta chunks demasiado lejanos.
     Retorna: (lista de (doc, score) unicos, texto de contexto concatenado)
     """
     k_inicial = max(TOP_K * 2, 20)
@@ -276,6 +256,8 @@ def buscar_contexto(query):
     seen = set()
     unique = []
     for doc, score in results_sorted:
+        if score > MIN_SCORE_THRESHOLD:
+            break  # Los siguientes son aun menos relevantes; no vale la pena
         content = doc.page_content.strip()
         if content not in seen:
             seen.add(content)
@@ -288,20 +270,43 @@ def buscar_contexto(query):
 
 
 def mostrar_fuentes(unique_results):
-    """Imprime las fuentes de los fragmentos recuperados (trazabilidad)."""
+    """
+    Muestra las TOP_SHOW fuentes mas relevantes con score y fragmento.
+    El resto se lista de forma resumida.
+    """
     print()
-    print(f"  {'-'*61}")
-    print(f"  FUENTES CONSULTADAS ({len(unique_results)} fragmentos recuperados)")
-    print(f"  {'-'*61}")
-    for i, (doc, score) in enumerate(unique_results, 1):
-        fuente  = doc.metadata.get("source", "Desconocido")
-        pagina  = doc.metadata.get("page", None)
-        pag_str = f" | Pag. {pagina + 1}" if pagina is not None else ""
-        stars   = max(1, 5 - round(score * 2))
-        estrellas = "(*)" * stars + "( )" * (5 - stars)
+    print(f"  {'='*61}")
+    print(f"  TOP {TOP_SHOW} FUENTES MAS RELEVANTES")
+    print(f"  {'='*61}")
+
+    destacadas = unique_results[:TOP_SHOW]
+    resto      = unique_results[TOP_SHOW:]
+
+    for i, (doc, score) in enumerate(destacadas, 1):
+        fuente   = doc.metadata.get("source", "Desconocido")
+        pagina   = doc.metadata.get("page", None)
+        pag_str  = f" | Pag. {pagina + 1}" if pagina is not None else ""
         basename = os.path.basename(fuente)
-        print(f"  #{i:>2}  [{estrellas}]  dist={score:.4f}  {basename}{pag_str}")
-    print(f"  {'-'*61}")
+        stars    = max(1, 5 - round(score * 2))
+        estrellas = "(*) " * stars + "( ) " * (5 - stars)
+        fragmento = doc.page_content.strip()[:200].replace("\n", " ")
+
+        print(f"  #{i}  {basename}{pag_str}")
+        print(f"      Score (distancia): {score:.4f}  |  Relevancia: {estrellas.strip()}")
+        print(f"      Fragmento: \"{fragmento}...\"")
+        print()
+
+    if resto:
+        print(f"  {'-'*61}")
+        print(f"  Otras {len(resto)} fuentes consultadas (menor relevancia):")
+        for i, (doc, score) in enumerate(resto, TOP_SHOW + 1):
+            fuente   = doc.metadata.get("source", "Desconocido")
+            pagina   = doc.metadata.get("page", None)
+            pag_str  = f" p.{pagina + 1}" if pagina is not None else ""
+            basename = os.path.basename(fuente)
+            print(f"    #{i:>2}  dist={score:.4f}  {basename}{pag_str}")
+
+    print(f"  {'='*61}")
 
 
 def generar_respuesta(query, context_text):
@@ -360,16 +365,38 @@ def loop_interactivo():
         print('[...] Buscando fragmentos relevantes en la base vectorial...')
         unique_results, context_text = buscar_contexto(query)
 
-        print('[...] Generando respuesta con el LLM...')
-        respuesta = generar_respuesta(query, context_text)
-
         print()
         print(SEPARADOR)
         print('  RESPUESTA')
         print(SEPARADOR)
         print()
-        print(respuesta)
-        print()
+
+        if not unique_results:
+            print('No encuentro evidencia suficiente en el contexto para responder esta pregunta.')
+            print()
+            print(f"  {'='*61}")
+            print('  [!] No se hallaron fragmentos relevantes en la base vectorial.')
+            print(f"      Verificá que el documento esté en 'data/' y que data_db esté actualizado.")
+            print(f"  {'='*61}")
+            continue
+
+        if MODO_DIRECTO:
+            # Muestra TODOS los fragmentos relevantes directamente, sin LLM
+            for i, (doc, score) in enumerate(unique_results, 1):
+                fuente   = doc.metadata.get('source', 'Desconocido')
+                pagina   = doc.metadata.get('page', None)
+                pag_str  = f' (Pag. {pagina + 1})' if pagina is not None else ''
+                basename = os.path.basename(fuente)
+                texto    = limpiar_texto(doc.page_content)
+                print(f'  [{basename}{pag_str}]  dist={score:.4f}')
+                print(f'  {"-"*61}')
+                print(f'  {texto}')
+                print()
+        else:
+            print('[...] Generando respuesta con el LLM...')
+            respuesta = generar_respuesta(query, context_text)
+            print(respuesta)
+            print()
 
         mostrar_fuentes(unique_results)
 

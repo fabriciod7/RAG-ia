@@ -10,3 +10,4 @@ transformers
 torch
 accelerate
 pypdf
+pymupdf
