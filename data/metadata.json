@@ -1,0 +1,219 @@
+{
+  "version": "1.0",
+  "institucion": "Club Social y Deportivo Las Palmeras",
+  "ultima_actualizacion": "2025-01-01",
+  "descripcion": "Metadata de los documentos del corpus RAG del club. Los documentos estan ordenados por prioridad de consulta (mayor prioridad primero).",
+
+  "documentos": [
+    {
+      "id": "doc_01",
+      "archivo": "faq/preguntas_frecuentes.txt",
+      "titulo": "Preguntas Frecuentes",
+      "categoria": "faq",
+      "prioridad": 1,
+      "formato": "txt",
+      "version": "enero 2025",
+      "descripcion": "Documento principal de consulta. Contiene las preguntas y respuestas mas frecuentes organizadas en 11 secciones tematicas: categorias de socios y cuotas, alta de socios, baja de socios, pagos y mora, instalaciones del club, reservas de instalaciones, piletas y normas de uso, torneos y liguillas, escuelas deportivas, invitados y acceso de terceros, y normas y conducta.",
+      "secciones": [
+        "Categorias de socios y cuotas",
+        "Alta de socios",
+        "Baja de socios",
+        "Pagos y mora",
+        "Instalaciones del club",
+        "Reservas de instalaciones",
+        "Piletas y normas de uso",
+        "Torneos y liguillas",
+        "Escuelas deportivas",
+        "Invitados y acceso de terceros",
+        "Normas y conducta"
+      ],
+      "temas_clave": [
+        "cuotas",
+        "categorias de socios",
+        "alta",
+        "baja",
+        "pagos",
+        "mora",
+        "instalaciones",
+        "reservas",
+        "piletas",
+        "torneos",
+        "escuelas deportivas",
+        "invitados",
+        "normas",
+        "sanciones"
+      ]
+    },
+    {
+      "id": "doc_02",
+      "archivo": "procedimientos/pagos_y_mora.txt",
+      "titulo": "Procedimiento de Pagos y Mora",
+      "categoria": "procedimientos",
+      "prioridad": 10,
+      "formato": "txt",
+      "version": "enero 2025",
+      "descripcion": "Documento detallado que regula los medios de pago aceptados, las fechas de vencimiento, las consecuencias progresivas de la mora (recargos economicos y restricciones de acceso), los mecanismos de regularizacion de deuda (pago total, moratoria interna, condonacion excepcional), constancias de pago y actualizacion de cuotas.",
+      "secciones": [
+        "Medios de pago",
+        "Fechas de vencimiento",
+        "Consecuencias de la mora",
+        "Como regularizar una deuda",
+        "Constancia de pago y comprobantes",
+        "Actualizacion de cuotas",
+        "Categorias de socios y cuotas"
+      ],
+      "temas_clave": [
+        "efectivo",
+        "transferencia bancaria",
+        "debito automatico",
+        "tarjeta de credito",
+        "Rapipago",
+        "Pago Facil",
+        "vencimiento",
+        "recargos",
+        "mora",
+        "suspension",
+        "baja automatica",
+        "moratoria",
+        "condonacion",
+        "comprobantes"
+      ]
+    },
+    {
+      "id": "doc_03",
+      "archivo": "procedimientos/alta_baja_socios.txt",
+      "titulo": "Procedimiento de Alta y Baja de Socios",
+      "categoria": "procedimientos",
+      "prioridad": 10,
+      "formato": "txt",
+      "version": "2026",
+      "descripcion": "Documento que establece la normativa institucional para el procedimiento de alta (solicitud, documentacion, verificacion, pago de matricula, emision de credencial) y baja de socios (solicitud, verificacion de estado, regularizacion de obligaciones, confirmacion). Incluye disposiciones generales y datos de contacto.",
+      "secciones": [
+        "Procedimiento de alta de socios",
+        "Procedimiento de baja de socios",
+        "Disposiciones generales"
+      ],
+      "temas_clave": [
+        "alta",
+        "baja",
+        "documentacion",
+        "matricula",
+        "credencial",
+        "menores de edad",
+        "socio vitalicio",
+        "reingreso",
+        "deuda"
+      ]
+    },
+    {
+      "id": "doc_04",
+      "archivo": "procedimientos/instalaciones_reservas.pdf",
+      "titulo": "Instalaciones y Reservas",
+      "categoria": "procedimientos",
+      "prioridad": 10,
+      "formato": "pdf",
+      "version": "desconocida",
+      "descripcion": "Documento en formato PDF que detalla las instalaciones disponibles del club y los procedimientos para realizar reservas de canchas, salones, quinchos y otros espacios.",
+      "secciones": [],
+      "temas_clave": [
+        "instalaciones",
+        "reservas",
+        "canchas",
+        "salones",
+        "quinchos",
+        "horarios"
+      ]
+    },
+    {
+      "id": "doc_05",
+      "archivo": "reglamentos/normas_convivencia.txt",
+      "titulo": "Normas de Convivencia",
+      "categoria": "reglamentos",
+      "prioridad": 10,
+      "formato": "txt",
+      "version": "enero 2025",
+      "descripcion": "Reglamento completo de convivencia del club. Define las condiciones de acceso, las normas de uso de instalaciones (piletas, gimnasio, canchas, salones, estacionamiento, vestuarios), las conductas prohibidas, las responsabilidades del club y del socio, el regimen sancionatorio y las autorizaciones para eventos especiales.",
+      "secciones": [
+        "Condiciones de acceso al club",
+        "Uso de las instalaciones",
+        "Normas especificas por area",
+        "Conductas prohibidas",
+        "Responsabilidad del club y de los socios",
+        "Sanciones",
+        "Eventos y autorizaciones especiales"
+      ],
+      "temas_clave": [
+        "acceso",
+        "indumentaria",
+        "danos",
+        "piletas",
+        "gimnasio",
+        "canchas",
+        "salones",
+        "estacionamiento",
+        "vestuarios",
+        "drogas",
+        "alcohol",
+        "mascotas",
+        "fumar",
+        "violencia",
+        "sanciones",
+        "eventos"
+      ]
+    },
+    {
+      "id": "doc_06",
+      "archivo": "reglamentos/reglamento_torneos.txt",
+      "titulo": "Reglamento de Torneos y Liguillas Internas",
+      "categoria": "reglamentos",
+      "prioridad": 10,
+      "formato": "txt",
+      "version": "enero 2025",
+      "descripcion": "Reglamento que regula la organizacion, inscripcion, categorias, formatos de competencia, sistema de puntos, sanciones disciplinarias y premiacion de las liguillas internas del club en siete disciplinas deportivas.",
+      "secciones": [
+        "Organizacion general de las liguillas",
+        "Requisitos de participacion",
+        "Categorias por disciplina",
+        "Formato de competencia y sistema de puntos",
+        "Sanciones y disciplina",
+        "Premiacion y cierre de temporada"
+      ],
+      "temas_clave": [
+        "torneos",
+        "liguillas",
+        "futbol 5",
+        "futsal",
+        "basquet",
+        "voley",
+        "tenis",
+        "padel",
+        "natacion",
+        "inscripcion",
+        "ficha medica",
+        "puntos",
+        "tarjetas",
+        "sanciones",
+        "apelaciones",
+        "premiacion"
+      ]
+    },
+    {
+      "id": "doc_07",
+      "archivo": "reglamentos/reglamento_socios.pdf",
+      "titulo": "Reglamento de Socios",
+      "categoria": "reglamentos",
+      "prioridad": 10,
+      "formato": "pdf",
+      "version": "desconocida",
+      "descripcion": "Documento en formato PDF que contiene el reglamento general de socios del club, incluyendo derechos, obligaciones y normativa de membresia.",
+      "secciones": [],
+      "temas_clave": [
+        "socios",
+        "membresia",
+        "derechos",
+        "obligaciones",
+        "reglamento"
+      ]
+    }
+  ]
+}

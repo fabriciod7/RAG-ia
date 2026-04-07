@@ -4,10 +4,10 @@ TP Integrador - Inteligencia Artificial - 4. anno - Lic. en Sistemas
 
 Pipeline:
   0. Silenciar logs y warnings
-  1. Configuracion hardcodeada en este archivo
-  2. Cargar modelo de embeddings (all-mpnet-base-v2)
+  1. Configuracion y carga de API Key desde .env
+  2. Cargar modelo de embeddings (Gemini embedding-001)
   3. Cargar/crear base vectorial Chroma
-  4. Cargar LLM Qwen2.5-0.5B-Instruct
+  4. Cargar LLM Gemini 1.5 Flash
   5. Loop interactivo de preguntas por consola
 """
 
@@ -15,8 +15,14 @@ import os
 import sys
 import glob
 import re
+import json
 import warnings
 import logging
+import time
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env si existe
+load_dotenv()
 
 # ============================================================
 # PASO 0 - Silenciar logs, warnings y telemetria
@@ -26,9 +32,6 @@ warnings.filterwarnings("ignore")
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
 os.environ["CHROMA_TELEMETRY_DISABLED"] = "1"
 os.environ["POSTHOG_DISABLED"] = "1"
-os.environ["HF_HUB_DISABLE_IMPLICIT_TOKEN"] = "1"
-os.environ["HUGGINGFACE_HUB_VERBOSITY"] = "error"
-os.environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 _SILENT = logging.CRITICAL + 1
 
@@ -38,21 +41,18 @@ for _h in logging.root.handlers[:]:
 logging.root.addHandler(logging.NullHandler())
 
 for _noisy in (
-    "pypdf", "pypdf._cmap", "pypdf._page",
-    "huggingface_hub", "huggingface_hub.utils._http",
-    "transformers", "sentence_transformers",
-    "langchain", "langchain_core", "chromadb",
+    "chromadb", "langchain", "langchain_core", "google.generativeai"
 ):
     logging.getLogger(_noisy).setLevel(_SILENT)
 
 # ------------------------------------------------------------
 # Importaciones principales (despues de silenciar)
 # ------------------------------------------------------------
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyMuPDFLoader, TextLoader, CSVLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline as hf_pipeline
 
 
 # ============================================================
@@ -62,22 +62,26 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline as hf_pip
 # --- Rutas ---
 PERSIST_DIR    = "./data_db"
 DATA_DIR       = "./data"
+METADATA_FILE  = os.path.join(DATA_DIR, "metadata.json")
 
 # --- Chunking ---
 CHUNK_SIZE     = 400    # Tamano de cada fragmento en caracteres
 CHUNK_OVERLAP  = 50   # Solapamiento entre fragmentos consecutivos
 
 # --- Recuperacion ---
-TOP_K               = 3    # Chunks pasados al LLM: menos = mas enfocado, menos alucinacion
+TOP_K               = 4    # Chunks pasados al LLM: menos = mas enfocado, menos alucinacion
 TOP_SHOW            = 2    # Cantidad de fuentes destacadas a mostrar al usuario
 MIN_SCORE_THRESHOLD = 0.80 # Distancia maxima aceptable — solo chunks muy relevantes
                            # Si todos los chunks superan este umbral, se rechaza la consulta
 
-# --- Modelo LLM ---
-MODEL_ID         = "Qwen/Qwen2.5-0.5B-Instruct"
-MAX_NEW_TOKENS   = 512
+# --- Modelo LLM Gemini ---
+# Solicita tu API KEY en: https://aistudio.google.com/app/apikey
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
+MODEL_ID         = "gemini-1.5-flash"
+EMBEDDING_MODEL  = "gemini-embedding-2-preview"
+MAX_NEW_TOKENS   = 1024
 TEMPERATURE      = 0.1
-REPETITION_PEN   = 1.1
 
 # --- Modo de respuesta ---
 # MODO_DIRECTO = True  -> muestra los fragmentos del documento sin pasar por el LLM
@@ -95,32 +99,71 @@ print(f"  Chunk overlap        : {CHUNK_OVERLAP} chars")
 print(f"  Top-K recuperado     : {TOP_K}")
 print(f"  Fuentes a mostrar    : {TOP_SHOW}")
 print(f"  Modelo LLM           : {MODEL_ID}")
+print(f"  Modelo Embeddings    : {EMBEDDING_MODEL}")
 print(f"  Temperatura          : {TEMPERATURE}")
-print(f"  Repetition penalty   : {REPETITION_PEN}")
 print(LINEA)
 
+if not GOOGLE_API_KEY:
+    print("\n[!] ERROR: No se encontro la variable de entorno 'GOOGLE_API_KEY'.")
+    print("    Por favor, obten una en https://aistudio.google.com/app/apikey")
+    print("    Y configurala en un archivo .env asi: GOOGLE_API_KEY=tu_clave_aca")
+    print("\n[INFO] El programa se cerrara ahora.")
+    sys.exit(1)
+
 
 # ============================================================
-# PASO 2 - Cargar modelo de embeddings
+# PASO 2 - Cargar modelo de embeddings (Gemini)
 # ============================================================
 
-print("\nCargando modelo de embeddings (all-mpnet-base-v2)...")
+print(f"\nCargando embeddings ({EMBEDDING_MODEL})...")
 
-embeddings = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
+# Configurar limitador de tasa para evitar error 429 en el Free Tier
+# (Max 100 RPM, usamos un limite conservador de 1 peticion por segundo)
+rate_limiter = InMemoryRateLimiter(
+    requests_per_second=1.0, 
+    max_bucket_size=10
+)
 
-print("[OK] Embeddings listos (768 dims)")
+embeddings = GoogleGenerativeAIEmbeddings(
+    model=EMBEDDING_MODEL,
+    google_api_key=GOOGLE_API_KEY,
+    rate_limiter=rate_limiter
+)
+
+print("[OK] Embeddings configurados (con limitador de tasa)")
 
 
 # ============================================================
 # PASOS 3-4 - Cargar o construir la base vectorial
 # ============================================================
 
-def cargar_documentos(data_dir):
-    """Recorre data_dir recursivamente y carga todos los .txt / .pdf / .csv."""
+def cargar_metadata(metadata_file):
+    """Carga metadata.json y devuelve un dict {archivo_relativo: info_doc}."""
+    if not os.path.exists(metadata_file):
+        print("[AVISO] No se encontro metadata.json. Se cargaran documentos sin metadata adicional.")
+        return {}
+    with open(metadata_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    lookup = {}
+    for doc_info in data.get("documentos", []):
+        archivo = doc_info.get("archivo", "").replace("/", os.sep)
+        lookup[archivo] = doc_info
+    print(f"[OK] Metadata cargada: {len(lookup)} documentos registrados.")
+    return lookup
+
+
+def cargar_documentos(data_dir, metadata_lookup=None):
+    """Recorre data_dir recursivamente y carga todos los .txt / .pdf / .csv.
+    Enriquece cada documento con metadata del JSON si esta disponible."""
+    if metadata_lookup is None:
+        metadata_lookup = {}
     raw_docs = []
     pattern = os.path.join(data_dir, "**", "*")
     for file_path in glob.glob(pattern, recursive=True):
         if not os.path.isfile(file_path):
+            continue
+        # Saltar archivos de metadata
+        if os.path.basename(file_path) == "metadata.json":
             continue
         try:
             if file_path.endswith(".pdf"):
@@ -144,9 +187,23 @@ def cargar_documentos(data_dir):
                 sys.stderr.close()
                 sys.stdout, sys.stderr = old_stdout, old_stderr
 
-            raw_docs.extend(docs)
+            # Enriquecer documentos con metadata del JSON
             rel = os.path.relpath(file_path, data_dir)
-            print(f"  [OK] {len(docs):>3} doc(s)  <--  {rel}")
+            meta_info = metadata_lookup.get(rel, None)
+            if meta_info:
+                for doc in docs:
+                    doc.metadata["titulo"] = meta_info.get("titulo", "")
+                    doc.metadata["categoria"] = meta_info.get("categoria", "")
+                    doc.metadata["prioridad"] = meta_info.get("prioridad", 99)
+                    doc.metadata["doc_id"] = meta_info.get("id", "")
+                tag = f" [P{meta_info['prioridad']}]"
+            else:
+                for doc in docs:
+                    doc.metadata["prioridad"] = 99
+                tag = ""
+
+            raw_docs.extend(docs)
+            print(f"  [OK] {len(docs):>3} doc(s)  <--  {rel}{tag}")
 
         except Exception as exc:
             print(f"  [ERROR] {os.path.basename(file_path)}: {exc}")
@@ -157,20 +214,30 @@ def cargar_documentos(data_dir):
 if os.path.exists(PERSIST_DIR):
     print()
     print(f"[INFO] Base vectorial encontrada en '{PERSIST_DIR}'.")
-    print("[INFO] Cargando DB existente (se omite re-indexacion)...")
-
-    vectorstore = Chroma(
-        persist_directory=PERSIST_DIR,
-        embedding_function=embeddings,
-    )
-    print("[OK]  Base vectorial cargada correctamente.")
+    
+    try:
+        vectorstore = Chroma(
+            persist_directory=PERSIST_DIR,
+            embedding_function=embeddings,
+        )
+        # Una pequeña prueba para ver si las dimensiones coinciden
+        vectorstore.similarity_search("test", k=1)
+        print("[OK]  Base vectorial cargada y validada.")
+    except Exception as e:
+        print(f"[AVISO] Error al cargar la base existente: {e}")
+        print("[AVISO] Es probable que el modelo de embeddings haya cambiado.")
+        print("[AVISO] SE ELIMINARA LA BASE ACTUAL Y SE RE-INDEXARA...")
+        import shutil
+        shutil.rmtree(PERSIST_DIR)
+        raw_documents = None # Forzar carga en el else
 
 else:
     print()
     print("[AVISO] No se encontro data_db/. Construyendo base vectorial desde cero...")
 
     print(f"\n[PASO 3a] Cargando documentos desde '{DATA_DIR}'...")
-    raw_documents = cargar_documentos(DATA_DIR)
+    metadata_lookup = cargar_metadata(METADATA_FILE)
+    raw_documents = cargar_documentos(DATA_DIR, metadata_lookup)
     print(f"[INFO] Total de documentos cargados: {len(raw_documents)}")
 
     if not raw_documents:
@@ -187,41 +254,41 @@ else:
     print(f"[INFO] Chunk size: {CHUNK_SIZE} chars | Overlap: {CHUNK_OVERLAP} chars")
 
     print(f"\n[PASO 4] Creando base vectorial en '{PERSIST_DIR}'...")
-    vectorstore = Chroma.from_documents(
-        documents,
-        embedding=embeddings,
+    print(f"[INFO] Indexando {len(documents)} fragmentos en lotes para respetar limites de la API...")
+
+    # Inicializar Chroma vacio
+    vectorstore = Chroma(
         persist_directory=PERSIST_DIR,
+        embedding_function=embeddings,
     )
+
+    # Indexar en lotes (batches) de 50 para evitar Error 429 (Resource Exhausted)
+    BATCH_SIZE = 50
+    for i in range(0, len(documents), BATCH_SIZE):
+        batch = documents[i : i + BATCH_SIZE]
+        print(f"       -> procesando fragmentos {i+1} a {min(i + BATCH_SIZE, len(documents))}...")
+        vectorstore.add_documents(batch)
+        if i + BATCH_SIZE < len(documents):
+            time.sleep(10) # Espera de seguridad entre lotes
+
     print("[OK]  Base vectorial creada y persistida.")
     print(f"[OK]  Total de chunks indexados: {len(documents)}")
 
 
 # ============================================================
-# PASO 5 - Cargar el LLM Qwen2.5-0.5B-Instruct
+# PASO 5 - Cargar el LLM Gemini 1.5 Flash
 # ============================================================
 
-print(f"\n[PASO 5] Cargando LLM ({MODEL_ID})...")
-print("         Esto puede tardar varios minutos la primera vez.")
+print(f"\n[PASO 5] Conectando con {MODEL_ID}...")
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-model_llm = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    device_map="auto",
-    torch_dtype="auto",
-)
-
-pipe = hf_pipeline(
-    "text-generation",
-    model=model_llm,
-    tokenizer=tokenizer,
-    max_new_tokens=MAX_NEW_TOKENS,
+llm = ChatGoogleGenerativeAI(
+    model=MODEL_ID,
+    google_api_key=GOOGLE_API_KEY,
     temperature=TEMPERATURE,
-    repetition_penalty=REPETITION_PEN,
-    do_sample=True,
-    return_full_text=False,
+    max_output_tokens=MAX_NEW_TOKENS,
 )
 
-print("[OK]  LLM listo.")
+print("[OK]  LLM listo (via API).")
 
 
 # ============================================================
@@ -257,7 +324,8 @@ def buscar_contexto(query):
     """
     k_inicial = max(TOP_K * 2, 20)
     results = vectorstore.similarity_search_with_score(query, k=k_inicial)
-    results_sorted = sorted(results, key=lambda x: x[1])
+    # Ordenar por distancia; ante scores similares (±0.01) priorizar segun metadata
+    results_sorted = sorted(results, key=lambda x: (round(x[1], 2), x[0].metadata.get("prioridad", 99)))
 
     seen = set()
     unique = []
@@ -289,15 +357,20 @@ def mostrar_fuentes(unique_results):
     resto      = unique_results[TOP_SHOW:]
 
     for i, (doc, score) in enumerate(destacadas, 1):
-        fuente   = doc.metadata.get("source", "Desconocido")
-        pagina   = doc.metadata.get("page", None)
-        pag_str  = f" | Pag. {pagina + 1}" if pagina is not None else ""
-        basename = os.path.basename(fuente)
-        stars    = max(1, 5 - round(score * 2))
+        fuente    = doc.metadata.get("source", "Desconocido")
+        pagina    = doc.metadata.get("page", None)
+        titulo    = doc.metadata.get("titulo", "")
+        categoria = doc.metadata.get("categoria", "")
+        pag_str   = f" | Pag. {pagina + 1}" if pagina is not None else ""
+        basename  = os.path.basename(fuente)
+        stars     = max(1, 5 - round(score * 2))
         estrellas = "(*) " * stars + "( ) " * (5 - stars)
         fragmento = doc.page_content.strip()[:200].replace("\n", " ")
 
-        print(f"  #{i}  {basename}{pag_str}")
+        nombre_doc = f"{titulo} ({basename})" if titulo else basename
+        meta_str   = f"  [{categoria.upper()}]" if categoria else ""
+
+        print(f"  #{i}  {nombre_doc}{pag_str}{meta_str}")
         print(f"      Score (distancia): {score:.4f}  |  Relevancia: {estrellas.strip()}")
         print(f"      Fragmento: \"{fragmento}...\"")
         print()
@@ -308,35 +381,26 @@ def mostrar_fuentes(unique_results):
         for i, (doc, score) in enumerate(resto, TOP_SHOW + 1):
             fuente   = doc.metadata.get("source", "Desconocido")
             pagina   = doc.metadata.get("page", None)
+            titulo   = doc.metadata.get("titulo", "")
             pag_str  = f" p.{pagina + 1}" if pagina is not None else ""
             basename = os.path.basename(fuente)
-            print(f"    #{i:>2}  dist={score:.4f}  {basename}{pag_str}")
+            nombre_doc = f"{titulo} ({basename})" if titulo else basename
+            print(f"    #{i:>2}  dist={score:.4f}  {nombre_doc}{pag_str}")
 
     print(f"  {'='*61}")
 
 
 def generar_respuesta(query, context_text):
-    """Genera respuesta con el LLM a partir del contexto recuperado."""
+    """Genera respuesta con Gemini a partir del contexto recuperado."""
+    from langchain_core.messages import SystemMessage, HumanMessage
+    
     messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user",   "content": "CONTEXTO:\n" + context_text + "\n\nPREGUNTA:\n" + query},
+        SystemMessage(content=SYSTEM_PROMPT),
+        HumanMessage(content=f"CONTEXTO:\n{context_text}\n\nPREGUNTA:\n{query}"),
     ]
-    final_prompt = tokenizer.apply_chat_template(
-        messages,
-        tokenize=False,
-        add_generation_prompt=True,
-    )
-    output = pipe(final_prompt)
-    response = output[0]["generated_text"].strip()
-
-
-    tokens_to_clean = [
-        '<|im_end|>',
-        '<|endoftext|>',
-    ]
-    for tok in tokens_to_clean:
-        response = response.replace(tok, '')
-    return response.strip()
+    
+    response = llm.invoke(messages)
+    return response.content.strip()
 
 
 SEPARADOR = '=' * 65
@@ -391,10 +455,12 @@ def loop_interactivo():
             for i, (doc, score) in enumerate(unique_results, 1):
                 fuente   = doc.metadata.get('source', 'Desconocido')
                 pagina   = doc.metadata.get('page', None)
+                titulo   = doc.metadata.get('titulo', '')
                 pag_str  = f' (Pag. {pagina + 1})' if pagina is not None else ''
                 basename = os.path.basename(fuente)
+                nombre_doc = f'{titulo} ({basename})' if titulo else basename
                 texto    = limpiar_texto(doc.page_content)
-                print(f'  [{basename}{pag_str}]  dist={score:.4f}')
+                print(f'  [{nombre_doc}{pag_str}]  dist={score:.4f}')
                 print(f'  {"-"*61}')
                 print(f'  {texto}')
                 print()
