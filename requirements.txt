@@ -9,5 +9,4 @@ sentence-transformers
 transformers
 torch
 accelerate
-pypdf
 pymupdf

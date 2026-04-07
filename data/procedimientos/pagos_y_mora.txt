@@ -1,0 +1,216 @@
+PROCEDIMIENTO DE PAGOS Y MORA
+CLUB SOCIAL Y DEPORTIVO "LAS PALMERAS"
+Versión vigente: enero 2025
+
+
+CAPÍTULO 1 — MEDIOS DE PAGO
+
+El club acepta distintos medios de pago para el abono de cuotas sociales, servicios adicionales y reservas. A continuación se detalla cada modalidad
+disponible, sus condiciones y las consideraciones que el socio debe tener en cuenta al utilizarlas.
+
+1.1 Efectivo
+
+El pago en efectivo se realiza exclusivamente en Secretaría, de lunes a viernes de 9:00 a 13:00 hs y de 16:00 a 20:00 hs, y los sábados de 9:00 a
+13:00 hs. No se acepta efectivo en otros sectores del club ni fuera de estos horarios. En todos los casos se entrega un recibo oficial numerado en
+el momento del pago. Es responsabilidad del socio conservar el comprobante como respaldo ante cualquier discrepancia futura.
+
+1.2 Transferencia bancaria y CBU
+
+El club dispone de una cuenta bancaria habilitada para recibir transferencias y depósitos. Los datos para operar son los siguientes:
+
+CBU: 1234567890123456789012
+Alias: PALMERAS.CLUB.CORDOBA
+Titular: Asociación Civil Club Las Palmeras
+CUIT: 30-12345678-9
+
+Es fundamental que el socio incluya en el campo "concepto" o "descripción" de la transferencia su número de socio y el mes que está abonando. El
+formato recomendado es: "Socio [número] – Cuota [mes] [año]", por ejemplo: "Socio 4512 – Cuota Mayo 2025". Si el concepto se omite o está incompleto,
+el sistema no puede acreditar el pago de forma automática y el mismo puede quedar en estado pendiente por hasta 48 horas hábiles, lo que eventualmente
+puede generar un aviso de mora aunque el pago haya sido realizado en término. En caso de que esto ocurra, el socio debe comunicarse con Secretaría
+presentando el comprobante de la transferencia para que el equipo administrativo realice la acreditación manual.
+
+1.3 Débito automático
+
+El débito automático está disponible para socios que operen con los siguientes bancos: Banco Nación, Galicia, BBVA y Santander. Para adherirse al
+servicio, el socio debe presentarse en Secretaría y completar el formulario de adhesión correspondiente. La adhesión no es inmediata: si se tramita
+después del día 25 del mes, el primer débito se ejecutará el mes siguiente.
+
+El débito se realiza el día 5 de cada mes. Si ese día coincide con un feriado nacional o provincial, el débito se ejecuta el primer día hábil siguiente.
+En caso de que el débito falle por falta de fondos u otro motivo técnico, el socio recibe una notificación y tiene plazo hasta el día 10 del mismo mes
+para regularizar el pago de forma manual por cualquiera de los otros medios disponibles. Si no lo hace antes del día 10, la cuota se considera vencida y
+comienzan a aplicarse las condiciones habituales de mora.
+
+Para dar de baja el débito automático, el socio debe solicitarlo en Secretaría con al menos 10 días de anticipación al próximo ciclo de cobro. Las bajas
+solicitadas fuera de ese plazo no pueden garantizarse para el ciclo inmediato siguiente.
+
+1.4 Tarjeta de crédito
+
+El pago con tarjeta de crédito se acepta únicamente en Secretaría, de forma presencial. Las tarjetas habilitadas son Visa y Mastercard. El club ofrece
+hasta 3 cuotas sin interés para el pago de cuotas sociales y costos de eventos o reservas. No está disponible el pago con tarjeta de crédito a través del
+portal web ni por teléfono, y tampoco se acepta para regularización de deudas dentro de un plan de cuotas (moratoria interna), salvo autorización
+expresa de la Comisión Directiva.
+
+1.5 Pago en redes externas (Rapipago / Pago Fácil)
+
+El club está habilitado para recibir pagos a través de las redes Rapipago y Pago Fácil. Para realizar el pago, el socio debe consultar en Secretaría el
+código de empresa vigente, ya que este puede actualizarse periódicamente. Este medio tiene un cargo de servicio de $150 por transacción, que corre por
+cuenta del socio y no se descuenta del monto de la cuota. El club no tiene control sobre los tiempos de acreditación de estas redes, que pueden demorar
+hasta 72 horas hábiles. Se recomienda utilizarlo con anticipación suficiente para evitar que la demora genere un estado de mora.
+
+
+CAPÍTULO 2 — FECHAS DE VENCIMIENTO
+
+Las cuotas mensuales vencen el día 10 de cada mes calendario. Existe un período de gracia de 5 días corridos, por lo que el último día para abonar sin
+consecuencias es el día 15 del mismo mes. A partir del día 16, la cuota se considera vencida y se inician los procedimientos de mora descritos en el
+capítulo siguiente.
+
+Para los socios adheridos al débito automático, el débito se ejecuta el día 5. Si falla, el plazo para regularizar manualmente es hasta el día 10. Estos
+socios no cuentan con período de gracia adicional una vez vencido ese plazo.
+
+Cuando el día de vencimiento (10 o 15, según corresponda) cae en día no hábil (sábado, domingo o feriado), el vencimiento se traslada al siguiente día
+hábil. Esta excepción no aplica para los pagos en redes externas, donde se recomienda abonar con antelación suficiente para cubrir los tiempos de
+acreditación.
+
+El club emite el calendario anual de vencimientos en enero de cada año y lo publica en el portal web y en el tablero de anuncios de Secretaría. Cualquier
+modificación excepcional al calendario se comunica con al menos 15 días de anticipación por email y en el portal.
+
+
+CAPÍTULO 3 — CONSECUENCIAS DE LA MORA
+
+3.1 Recargos económicos
+
+La mora genera recargos sobre el valor de la cuota original, calculados de la siguiente manera.
+
+Mora de 1 a 30 días (días 16 al 45 del mes vencido): recargo del 5% sobre el valor de la cuota original.
+
+Mora de 31 a 60 días: recargo acumulativo del 10% sobre el valor original de la cuota. Este porcentaje reemplaza al del tramo anterior y se aplica
+sobre la cuota base, no sobre el total ya recargado.
+
+Mora mayor a 60 días: recargo del 15% sobre el valor original, más el inicio formal del procedimiento de suspensión. A partir de este punto, la
+regularización requiere intervención de Secretaría y no puede realizarse únicamente a través del portal web.
+
+Los recargos se calculan cuota por cuota sobre su valor original. Si un socio adeuda varias cuotas en distintos tramos de mora, cada una acumula el
+recargo correspondiente a su antigüedad. Por ejemplo, si se adeudan dos cuotas y una lleva 20 días de mora y la otra lleva 45 días, la primera acumula
+5% y la segunda 10%, y el total a pagar es la suma de ambas cuotas con sus recargos individuales.
+
+3.2 Restricciones de acceso según nivel de mora
+
+El club aplica restricciones progresivas de acceso según la cantidad de cuotas impagas acumuladas.
+
+Con 1 cuota vencida impaga: el socio puede acceder al club con normalidad, pero recibe un aviso informativo en recepción al momento de ingresar. No
+hay restricciones sobre el uso de instalaciones ni sobre la posibilidad de hacer reservas.
+
+Con 2 cuotas vencidas impagas: el acceso a instalaciones cubiertas queda restringido. El socio no puede realizar reservas de canchas, no puede
+inscribirse en torneos ni participar en eventos especiales organizados por el club. Puede seguir accediendo a espacios abiertos y áreas comunes.
+
+Con 3 cuotas vencidas impagas: el acceso al club queda suspendido por completo hasta tanto se regularice la deuda total o se acuerde un plan de pago
+con Secretaría. La suspensión incluye todos los espacios del club, tanto interiores como exteriores.
+
+Con 6 cuotas vencidas impagas: se activa el proceso de baja automática conforme a lo establecido en el artículo 4.2 del Reglamento de Socios. La baja
+implica la pérdida de todos los derechos asociados a la membresía, incluyendo la antigüedad acumulada. Para reincorporarse al club, el ex socio deberá
+abonar la totalidad de la deuda pendiente, los recargos correspondientes y la cuota de ingreso vigente al momento de la reincorporación.
+
+3.3 Comunicaciones ante la mora
+
+El club realiza notificaciones sucesivas a medida que avanza la mora, a través de los datos de contacto registrados por el socio en su ficha. Es
+responsabilidad del socio mantener actualizados su email y número de teléfono en Secretaría.
+
+Al vencimiento de la cuota (día 10): notificación automática por correo electrónico recordando el vencimiento.
+
+A los 15 días de mora: segundo aviso por email y mensaje de texto (SMS) al número de celular registrado.
+
+A los 30 días de mora: notificación formal por carta enviada al domicilio declarado, o notificación presencial si el socio concurre al club.
+
+A los 60 días de mora: envío de carta documento informando el inicio del proceso de baja y detallando el monto total adeudado.
+
+La falta de recepción de estas notificaciones —por cambio de datos no informado, filtros de spam u otros motivos— no exime al socio de las consecuencias
+de la mora ni interrumpe los plazos establecidos.
+
+
+CAPÍTULO 4 — CÓMO REGULARIZAR UNA DEUDA
+
+El socio que se encuentra en situación de mora puede regularizar su situación mediante alguno de los siguientes mecanismos.
+
+4.1 Pago total
+
+El socio puede abonar en un único pago la totalidad de lo adeudado, incluyendo las cuotas impagas y los recargos por mora acumulados hasta la fecha
+del pago. Una vez confirmado el pago en Secretaría —ya sea por acreditación de transferencia, pago en efectivo o comprobante de red externa— el acceso
+al club se restaura el mismo día. Si el pago se realiza fuera del horario de Secretaría (por transferencia nocturna, por ejemplo), la restauración del
+acceso se efectiviza el siguiente día hábil al momento de la acreditación.
+
+4.2 Plan de cuotas (moratoria interna)
+
+El club ofrece un plan de regularización en cuotas para socios que no puedan afrontar el pago total de la deuda. Este plan está disponible para deudas de
+hasta 6 cuotas impagas. Para acceder, el socio debe presentarse en Secretaría y firmar un convenio de pago. La deuda total, incluidos los recargos
+vigentes al momento del convenio, se divide en un máximo de 3 cuotas mensuales adicionales a la cuota corriente.
+
+Durante la vigencia del plan de cuotas, el socio recupera acceso básico a las instalaciones del club, equivalente al nivel de un socio adherente. Esto
+implica que puede ingresar al club y usar instalaciones abiertas, pero no puede realizar reservas de canchas, participar en torneos ni acceder a eventos
+especiales hasta tanto no se cancele la totalidad del convenio.
+
+Si el socio incumple el pago de alguna cuota del convenio, el plan queda anulado automáticamente y la situación vuelve al estado de mora que existía antes
+del acuerdo, reactivándose el proceso de baja si correspondiera. No se otorgan nuevos planes de cuotas a socios que hayan incumplido un convenio previo
+dentro de los 12 meses anteriores.
+
+4.3 Condonación de recargos (excepcional)
+
+En situaciones de fuerza mayor debidamente documentadas —como internación médica prolongada, fallecimiento de familiar directo, desastre que afecte el
+domicilio del socio u otras causas de gravedad similar— el socio puede solicitar la condonación parcial o total de los recargos por mora. Esta posibilidad no
+alcanza al capital adeudado (las cuotas en sí), sino únicamente a los intereses y recargos generados.
+
+Para iniciar el trámite, el socio debe presentar una nota dirigida a la Comisión Directiva explicando la situación y adjuntando la documentación respaldatoria
+correspondiente (certificado médico, documentación municipal, etc.). La Comisión evalúa el caso y emite resolución dentro de los 15 días hábiles posteriores
+a la presentación. La aprobación no es automática ni está garantizada, y queda a exclusivo criterio de la Comisión según la gravedad del caso y los
+antecedentes del socio.
+
+
+CAPÍTULO 5 — CONSTANCIA DE PAGO Y COMPROBANTES
+
+Todo pago realizado en Secretaría genera un recibo oficial numerado que se entrega al socio en el momento. En caso de pérdida, el socio puede
+solicitar una copia en Secretaría presentando su DNI y número de socio. Las copias se emiten sin cargo.
+
+Los pagos realizados por transferencia bancaria generan un comprobante electrónico que puede visualizarse en el portal del club ingresando con número de
+socio y contraseña en www.laspalmeras.com.ar/socios, una vez que la transferencia haya sido acreditada. Los pagos realizados en redes externas (Rapipago,
+Pago Fácil) generan un ticket en el punto de pago que el socio debe conservar como único comprobante, ya que el club no emite un comprobante adicional
+para esos casos hasta que la acreditación se complete.
+
+En caso de discrepancia entre el registro del club y el comprobante presentado por el socio, prevalece el comprobante bancario o el ticket de la red de
+pago, salvo que se demuestre un error comprobable de parte del banco o la red. Ante cualquier inconsistencia, el socio debe comunicarse con Secretaría
+dentro de los 30 días corridos desde la fecha del pago en cuestión. Reclamos fuera de ese plazo pueden no poder resolverse de manera favorable por
+limitaciones en los registros bancarios disponibles.
+
+El club conserva el historial de pagos de cada socio por un período mínimo de 5 años, de acuerdo con las normas contables aplicables a las asociaciones
+civiles. El socio puede solicitar un resumen de su historial de pagos en cualquier momento en Secretaría.
+
+
+CAPÍTULO 6 — ACTUALIZACIÓN DE CUOTAS
+
+El valor de las cuotas sociales es fijado anualmente por la Comisión Directiva en la Asamblea General Ordinaria, de acuerdo con los costos operativos del
+club y la situación económica general. Las actualizaciones de cuota se comunican a los socios con un mínimo de 30 días de anticipación a la fecha en que
+entran en vigencia, a través del portal web, email y cartelería en Secretaría.
+
+En caso de actualizaciones extraordinarias fuera del ciclo anual —motivadas por variaciones económicas significativas, aumentos en servicios esenciales u
+otras causas— la Comisión Directiva puede convocar a una Asamblea Extraordinaria o resolver en sesión ordinaria, según lo permita el estatuto. En todos los
+casos, el plazo mínimo de comunicación previa es de 15 días corridos antes de la entrada en vigencia del nuevo valor.
+
+Los socios que tengan convenio de pago activo (moratoria interna) abonan las cuotas del convenio según el valor vigente al momento de la firma del mismo.
+Las cuotas corrientes que vencen durante el plan de pagos se calculan al valor actualizado correspondiente al mes en curso.
+
+
+CAPÍTULO 7 — CATEGORÍAS DE SOCIOS Y CUOTAS
+
+Las cuotas mensuales varían según la categoría de membresía. A continuación se describen las particularidades de pago de cada categoría.
+
+Socios activos: abonan la cuota mensual completa. Tienen acceso a todos los medios de pago disponibles y pueden adherirse al débito automático.
+
+Socios vitalicios: no abonan cuota mensual ordinaria. Sin embargo, pueden estar sujetos al pago de contribuciones extraordinarias aprobadas en Asamblea.
+Si adeudan contribuciones extraordinarias, se aplican las mismas reglas de mora que para socios activos.
+
+Socios adherentes: abonan una cuota mensual reducida, cuyo valor es fijado anualmente en Asamblea junto al resto de las tarifas. Tienen acceso a los mismos
+medios de pago que los socios activos.
+
+Socios cadetes (menores de 18 años): la cuota es gestionada y abonada por el adulto responsable vinculado a la cuenta del menor. Las comunicaciones de mora
+se dirigen al adulto responsable. El acceso del socio cadete puede verse afectado por la mora del adulto responsable en su propia cuota, si la tuviese.
+
+Socios grupos familiares: cuando varias membresías están vinculadas bajo un mismo grupo familiar, las cuotas pueden abonarse en un único pago consolidado
+en Secretaría. Sin embargo, a efectos de mora y restricciones de acceso, cada membresía se evalúa de forma independiente.

@@ -76,7 +76,7 @@ MIN_SCORE_THRESHOLD = 0.80 # Distancia maxima aceptable — solo chunks muy rele
 # --- Modelo LLM ---
 MODEL_ID         = "Qwen/Qwen2.5-0.5B-Instruct"
 MAX_NEW_TOKENS   = 512
-TEMPERATURE      = 0.2
+TEMPERATURE      = 0.1
 REPETITION_PEN   = 1.1
 
 # --- Modo de respuesta ---
@@ -229,8 +229,14 @@ print("[OK]  LLM listo.")
 # ============================================================
 
 SYSTEM_PROMPT = (
-    "Utiliza el contexto proporcionado para responder detalladamente. "
-    "Explica los conceptos solo basandote en la informacion proporcionada."
+    "Eres un asistente del Club Social y Deportivo Las Palmeras. "
+    "SOLO puedes responder usando la informacion que aparece TEXTUALMENTE en el CONTEXTO proporcionado. "
+    "PROHIBIDO inventar, deducir, completar o agregar cualquier dato que NO este escrito en el CONTEXTO. "
+    "PROHIBIDO usar conocimiento propio o de entrenamiento. "
+    "Si la respuesta no esta en el CONTEXTO, responde EXACTAMENTE: "
+    "'No encuentro esa informacion en los documentos del club.' "
+    "Cuando listes elementos (categorias, articulos, valores, etc.) copialos EXACTAMENTE tal como aparecen en el CONTEXTO, "
+    "sin cambiar nombres, sin agregar ni quitar items."
 )
 
 
