@@ -1,4 +1,15 @@
-- se bajo temperatura
+-se decicio elaborar rag para club
+
+-se elaboro la documentacion
+-se comenzo el desarrollo con un entorno local, modelo llm qwen, chroma como db y embeddings locales
+- 
+-se enriquecio la documentacion con ia
+-se implemento un archivo de metadata para los documentos, para darle prioridad a las pregunats frecuentes
+
+-al no conseguir respuesta certeras con el entorno local cambiamos a los modelos de gemini
+-cambiamos a gemini 1.5 flash como llm
+-cambiamos a gemini embedding 2 preview como embeddings
+-tuvimos conflicto con las peticiones a la api, hubo que gestionar las peticiones, enviando menos fragmentos y menos seguido
 
 - se obtuvo esta respuesta alucinógena: 
   Las categorías de socios reconocidas por el club social y deportivo "Las Palmeras":

@@ -69,16 +69,16 @@ CHUNK_SIZE     = 400    # Tamano de cada fragmento en caracteres
 CHUNK_OVERLAP  = 50   # Solapamiento entre fragmentos consecutivos
 
 # --- Recuperacion ---
-TOP_K               = 4    # Chunks pasados al LLM: menos = mas enfocado, menos alucinacion
-TOP_SHOW            = 2    # Cantidad de fuentes destacadas a mostrar al usuario
-MIN_SCORE_THRESHOLD = 0.80 # Distancia maxima aceptable — solo chunks muy relevantes
-                           # Si todos los chunks superan este umbral, se rechaza la consulta
+TOP_K               = 12   # Aumentado para Gemini (soporta muchisimo contexto)
+TOP_SHOW            = 3    # Muestra 3 fuentes relevantes
+MIN_SCORE_THRESHOLD = 2.00 # Distancia maxima aceptable. Gemini usa L2 (0.0 a 2.0)
+                           # Se relaja a 2.0 porque las distancias de Gemini son mayores.
 
 # --- Modelo LLM Gemini ---
 # Solicita tu API KEY en: https://aistudio.google.com/app/apikey
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-MODEL_ID         = "gemini-1.5-flash"
+MODEL_ID         = "gemini-3.1-flash-lite-preview"
 EMBEDDING_MODEL  = "gemini-embedding-2-preview"
 MAX_NEW_TOKENS   = 1024
 TEMPERATURE      = 0.1
@@ -262,14 +262,15 @@ else:
         embedding_function=embeddings,
     )
 
-    # Indexar en lotes (batches) de 50 para evitar Error 429 (Resource Exhausted)
-    BATCH_SIZE = 50
+    # Indexar en lotes pequenos por si la API procesa 1 request por documento
+    # Con 10 docs cada 7 segundos, estamos en ~85 peticiones por minuto (tope Free Tier = 100)
+    BATCH_SIZE = 10
     for i in range(0, len(documents), BATCH_SIZE):
         batch = documents[i : i + BATCH_SIZE]
         print(f"       -> procesando fragmentos {i+1} a {min(i + BATCH_SIZE, len(documents))}...")
         vectorstore.add_documents(batch)
         if i + BATCH_SIZE < len(documents):
-            time.sleep(10) # Espera de seguridad entre lotes
+            time.sleep(7) # Espera segura para Free Tier
 
     print("[OK]  Base vectorial creada y persistida.")
     print(f"[OK]  Total de chunks indexados: {len(documents)}")
@@ -400,8 +401,18 @@ def generar_respuesta(query, context_text):
     ]
     
     response = llm.invoke(messages)
-    return response.content.strip()
-
+    content = response.content
+    if isinstance(content, list):
+        # Langchain puede devolver una lista de bloques con Gemini
+        text_parts = []
+        for part in content:
+            if isinstance(part, dict) and 'text' in part:
+                text_parts.append(part['text'])
+            elif isinstance(part, str):
+                text_parts.append(part)
+        return "".join(text_parts).strip()
+    
+    return str(content).strip()
 
 SEPARADOR = '=' * 65
 
