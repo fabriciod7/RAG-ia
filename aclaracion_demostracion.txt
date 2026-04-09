@@ -1,0 +1,5 @@
+Se muestran primero los dos limites y luego los tres aciertos.
+
+Ya que estamos le dejo los datos de los alumnos:
+Carrere Lautaro (45336940)
+Demartin Fabricio (45946470)
