@@ -1,25 +1,32 @@
 -se decicio elaborar rag para club
-
--se elaboro la documentacion
--se comenzo el desarrollo con un entorno local, modelo llm qwen, chroma como db y embeddings locales
-- 
+-se busco documentacion de distintos clubes, para dimensionar y estructurar la propia, y se adapto al club en cuestion
+-se comenzo el desarrollo con un entorno local, modelo Qwen2.5-0.5B-Instruct, chroma como db y embeddings locales
+-comenzamos con la siguiente configuracion, dado que no tenemos documentos muy extensos:
+chunk_size=400
+overlap=50
+top_k=12 
+score_threshold=0.7 (ahora esta en 2.0 por el modelo gemini)
+prioridad al faq
+temperature 0.3 (para permitir reformulacion pero sin tanta alucinacion)
+-se restringio la respuesta para que no alucine, si la consulta no esta en la documentacion, no responde
+-archivo json de configuracion para ajustar dinamicamente el chunking y retrieval
+-eliminamos el archivo anterior y solo se edita desde main.py
 -se enriquecio la documentacion con ia
--se implemento un archivo de metadata para los documentos, para darle prioridad a las pregunats frecuentes
-
--al no conseguir respuesta certeras con el entorno local cambiamos a los modelos de gemini
+-se implemento un archivo json para establecer prioridad en los documentos (hay muchas preguntas que estan mejor respondidas en el faq
+y en ciertos casos no obtenian el mejor score)
+- se obtuvo esta respuesta alucinógena: ¿Cuales son las categorias de socios?
+  Las categorías de socios reconocidas por el club social y deportivo "Las Palmeras":
+1. Socio Activo: Mayor de 18 años con más de 25 años de edad ininterrumpido.
+2. Socio Adherente: Mayor de 18 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.                                           
+3. Socio Vitalicio: Mayor de 18 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
+4. Socio Caquete: Mayor de 6 a 17 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.                                                                                                                                                            
+5. Socio Adjetente: Mayor de 6 a 17 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
+-al no conseguir respuesta certeras con el entorno local y en ciertos casos alucinaciones, cambiamos a los modelos de Gemini
 -cambiamos a gemini 1.5 flash como llm
 -cambiamos a gemini embedding 2 preview como embeddings
--tuvimos conflicto con las peticiones a la api, hubo que gestionar las peticiones, enviando menos fragmentos y menos seguido
-
-- se obtuvo esta respuesta alucinógena: 
-  Las categorías de socios reconocidas por el club social y deportivo "Las Palmeras":
-                                 
-1. Socio Activo: Mayor de 18 años con más de 25 años de edad ininterrumpido.
-                                                
-2. Socio Adherente: Mayor de 18 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
-                                           
-3. Socio Vitalicio: Mayor de 18 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
-                                                     
-4. Socio Caquete: Mayor de 6 a 17 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
-                                                                                                                                                                                          
-5. Socio Adjetente: Mayor de 6 a 17 años con acceso a las instalaciones en horarios no pico desde 9:00 a 16:00 y fines de semana desde 8:00 a 11:00.
+-conflicto para generar la base vectorial
+-hubo que recalibrar los umbrales de distancia dentro del espacio vectorial, ya que los embeddings de Gemini calculan las similitudes semánticas
+diferente al modelo local Qwen
+-para indexar todo el contenido de los documentos del club a la nube de Google, hubo que implementar procesamiento por lotes, que incluye una función
+limitadora de frecuencia de envío. Esto permite cargar todos los documentos en la base de datos sin sobrepasar el limite de interacciones permitidas por minuto por Google
+-se obtuvieron respuestas esperadas, pasamos a las respectivas pruebas dejando los resultados en el documento que corresponde

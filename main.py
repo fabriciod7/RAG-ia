@@ -1,16 +1,3 @@
-"""
-main.py - Asistente RAG - Club Social y Deportivo Las Palmeras
-TP Integrador - Inteligencia Artificial - 4. anno - Lic. en Sistemas
-
-Pipeline:
-  0. Silenciar logs y warnings
-  1. Configuracion y carga de API Key desde .env
-  2. Cargar modelo de embeddings (Gemini embedding-001)
-  3. Cargar/crear base vectorial Chroma
-  4. Cargar LLM Gemini 1.5 Flash
-  5. Loop interactivo de preguntas por consola
-"""
-
 import os
 import sys
 import glob
@@ -24,9 +11,7 @@ from dotenv import load_dotenv
 # Cargar variables de entorno desde .env si existe
 load_dotenv()
 
-# ============================================================
 # PASO 0 - Silenciar logs, warnings y telemetria
-# ============================================================
 warnings.filterwarnings("ignore")
 
 os.environ["ANONYMIZED_TELEMETRY"] = "False"
@@ -45,9 +30,7 @@ for _noisy in (
 ):
     logging.getLogger(_noisy).setLevel(_SILENT)
 
-# ------------------------------------------------------------
-# Importaciones principales (despues de silenciar)
-# ------------------------------------------------------------
+# Importaciones principales
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_chroma import Chroma
@@ -55,27 +38,22 @@ from langchain_community.document_loaders import PyMuPDFLoader, TextLoader, CSVL
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-# ============================================================
 # PASO 1 - Configuracion (editar directamente aqui)
-# ============================================================
-
-# --- Rutas ---
+# Rutas 
 PERSIST_DIR    = "./data_db"
 DATA_DIR       = "./data"
 METADATA_FILE  = os.path.join(DATA_DIR, "metadata.json")
 
-# --- Chunking ---
+# Chunking
 CHUNK_SIZE     = 400    # Tamano de cada fragmento en caracteres
 CHUNK_OVERLAP  = 50   # Solapamiento entre fragmentos consecutivos
 
-# --- Recuperacion ---
-TOP_K               = 12   # Aumentado para Gemini (soporta muchisimo contexto)
+# Recuperacion
+TOP_K               = 12   # Los K mejores
 TOP_SHOW            = 3    # Muestra 3 fuentes relevantes
-MIN_SCORE_THRESHOLD = 2.00 # Distancia maxima aceptable. Gemini usa L2 (0.0 a 2.0)
-                           # Se relaja a 2.0 porque las distancias de Gemini son mayores.
+MIN_SCORE_THRESHOLD = 2.00 # Distancia maxima aceptable.
 
-# --- Modelo LLM Gemini ---
-# Solicita tu API KEY en: https://aistudio.google.com/app/apikey
+# Cargar API KEY
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 MODEL_ID         = "gemini-3.1-flash-lite-preview"
@@ -83,10 +61,9 @@ EMBEDDING_MODEL  = "gemini-embedding-2-preview"
 MAX_NEW_TOKENS   = 1024
 TEMPERATURE      = 0.1
 
-# --- Modo de respuesta ---
-# MODO_DIRECTO = True  -> muestra los fragmentos del documento sin pasar por el LLM
-#                         Respuesta 100% fiel al texto, sin alucinaciones.
-# MODO_DIRECTO = False -> usa el LLM para generar la respuesta (puede alucinar con 0.5B)
+# Modo de respuesta
+# MODO_DIRECTO = True  -> muestra los fragmentos del documento sin pasar por el LLM, Respuesta 100% fiel al texto, sin alucinaciones.
+# MODO_DIRECTO = False -> usa el LLM para generar la respuesta
 MODO_DIRECTO     = False
 
 LINEA = "=" * 65
@@ -110,15 +87,11 @@ if not GOOGLE_API_KEY:
     print("\n[INFO] El programa se cerrara ahora.")
     sys.exit(1)
 
-
-# ============================================================
 # PASO 2 - Cargar modelo de embeddings (Gemini)
-# ============================================================
 
 print(f"\nCargando embeddings ({EMBEDDING_MODEL})...")
 
-# Configurar limitador de tasa para evitar error 429 en el Free Tier
-# (Max 100 RPM, usamos un limite conservador de 1 peticion por segundo)
+# Limite de peticiones por minuto
 rate_limiter = InMemoryRateLimiter(
     requests_per_second=1.0, 
     max_bucket_size=10
@@ -129,14 +102,9 @@ embeddings = GoogleGenerativeAIEmbeddings(
     google_api_key=GOOGLE_API_KEY,
     rate_limiter=rate_limiter
 )
-
 print("[OK] Embeddings configurados (con limitador de tasa)")
 
-
-# ============================================================
 # PASOS 3-4 - Cargar o construir la base vectorial
-# ============================================================
-
 def cargar_metadata(metadata_file):
     """Carga metadata.json y devuelve un dict {archivo_relativo: info_doc}."""
     if not os.path.exists(metadata_file):
@@ -150,7 +118,6 @@ def cargar_metadata(metadata_file):
         lookup[archivo] = doc_info
     print(f"[OK] Metadata cargada: {len(lookup)} documentos registrados.")
     return lookup
-
 
 def cargar_documentos(data_dir, metadata_lookup=None):
     """Recorre data_dir recursivamente y carga todos los .txt / .pdf / .csv.
@@ -275,11 +242,7 @@ else:
     print("[OK]  Base vectorial creada y persistida.")
     print(f"[OK]  Total de chunks indexados: {len(documents)}")
 
-
-# ============================================================
 # PASO 5 - Cargar el LLM Gemini 1.5 Flash
-# ============================================================
-
 print(f"\n[PASO 5] Conectando con {MODEL_ID}...")
 
 llm = ChatGoogleGenerativeAI(
@@ -288,14 +251,9 @@ llm = ChatGoogleGenerativeAI(
     temperature=TEMPERATURE,
     max_output_tokens=MAX_NEW_TOKENS,
 )
-
 print("[OK]  LLM listo (via API).")
 
-
-# ============================================================
 # FUNCIONES DE CONSULTA RAG
-# ============================================================
-
 SYSTEM_PROMPT = (
     "Eres un asistente del Club Social y Deportivo Las Palmeras. "
     "SOLO puedes responder usando la informacion que aparece TEXTUALMENTE en el CONTEXTO proporcionado. "
@@ -307,7 +265,6 @@ SYSTEM_PROMPT = (
     "sin cambiar nombres, sin agregar ni quitar items."
 )
 
-
 def limpiar_texto(texto):
     """Normaliza texto extraido de PDF: colapsa espacios multiples y saltos de linea sueltos."""
     # Colapsar 2+ espacios en uno solo
@@ -315,7 +272,6 @@ def limpiar_texto(texto):
     # Saltos de linea multiples con solo espacios entre ellos -> un salto de linea
     texto = re.sub(r'\n\s*\n', '\n', texto)
     return texto.strip()
-
 
 def buscar_contexto(query):
     """
@@ -342,7 +298,6 @@ def buscar_contexto(query):
 
     context_text = "\n\n".join(doc.page_content for doc, _ in unique)
     return unique, context_text
-
 
 def mostrar_fuentes(unique_results):
     """
@@ -390,7 +345,6 @@ def mostrar_fuentes(unique_results):
 
     print(f"  {'='*61}")
 
-
 def generar_respuesta(query, context_text):
     """Genera respuesta con Gemini a partir del contexto recuperado."""
     from langchain_core.messages import SystemMessage, HumanMessage
@@ -415,7 +369,6 @@ def generar_respuesta(query, context_text):
     return str(content).strip()
 
 SEPARADOR = '=' * 65
-
 
 def loop_interactivo():
     print()
@@ -482,7 +435,6 @@ def loop_interactivo():
             print()
 
         mostrar_fuentes(unique_results)
-
 
 if __name__ == '__main__':
     loop_interactivo()
