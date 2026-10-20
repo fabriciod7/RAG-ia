@@ -1,3 +1,5 @@
+# Sistema RAG orientado a la reglamentacion y normativas de un club deportivo.
+
 GUIA DE EJECUCION
 
 # Requisitos Previos
